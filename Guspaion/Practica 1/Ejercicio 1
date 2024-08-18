@@ -1,0 +1,7 @@
+a) Todas las acciones que tienen lugar al ejecutarse la instrucción CALL MUL. 
+b) Todas las acciones que tienen lugar al ejecutarse las instrucciones PUSH DX y POP DX. 
+c) ¿Qué operación se realiza con la instrucción RET?
+
+a) Al ejecutarse la instruccion CALL MUL en primer lugar se pushea en la pila la direccion de la instruccion siguiente al CALL y se coloca en IP la direccion de la subrutina MUL. 
+b) Al ejecutar un PUSH DX decrementa en 2 el SP(Stack Pointer) y guarda en los dos bytes correspondientes de la pila lo que contiene DX.
+c) Al ejecutar RET se realiza la instruccion POP sobre la pila, la cual deberia contener la direccion que pushea la instruccion CALL
