@@ -1,0 +1,18 @@
+a) ¿Cuál es el modo de direccionamiento de la instrucción MOV AX, [BX]? ¿Qué se copia en el registro AX en este caso? 
+b) ¿Qué función cumple el registro temporal ri que aparece al ejecutarse una instrucción como la anterior? 
+c) ¿Qué se guarda en AX al ejecutarse MOV AX, OFFSET RES? 
+d) ¿Cómo se pasa la variable RES a la pila, por valor o por referencia? ¿Qué ventaja tiene esto? 
+e) ¿Cómo trabajan las instrucciones PUSH y POP? 
+
+a) La instruccion MOV AX, [BX] es modo de direccionamiento indirecto por registro ya que no se le pasa directamente una direccion si no que se pasa aquella que
+contiene BX.
+En este caso se copia en AX el dato que contiene la direccion de memoria almacenada en el registro BX.
+
+b) Sirve de intermediario para ejecutar instrucciones, en este caso el registro ri almacena una direccion de forma temporal.
+
+c) Se guarda la direccion de memoria asociada a la etiqueta RES.
+
+d) Se pasa por referencia ya que se pushea una direccion de memoria. La ventaja consiste en que se puede modificar directamente el valor en memoria.
+
+e) La instruccion PUSH decrementa en 2 el SP y asigna 2 bytes en la pila donde se guarda el valor del operando.
+   La instruccion POP lee 2 bytes de la pila y guarda el dato correspondiente en el operando, por ultimo incremente en 2 el SP. 
