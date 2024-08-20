@@ -1,0 +1,26 @@
+ORG 1000H ; Memoria de datos
+C DB "F"; Caracter a checkear
+RES DB ? ; RESULTADO
+INICIAL DB "A" ; VALOR INICIAL DE A EN ASCII
+FINAL DB "Z" ; VALOR FINAL DE Z EN ASCII
+
+
+ORG 3000H ; Subrutinas
+COMPARATOR:
+  CMP AL, BL  ; Compara el caracter C con el inicial de la tabla ASCII 
+  JS FIN ; si da negativo hay signo y salta al fin. SINO SIGUE
+  CMP BH, AL ; Compara el caracter C con la letra final de ASCII 
+  JS FIN ; si da negativo hay signo y salta al fin. SINO SIGUE
+  MOV RES, 0FFH ; MUEVE 0FFH A RES SI PASO AMBAS COMPARACIONES
+  RET
+FIN:
+  MOV RES, 0 ;SINO PASO LA COMPARACION RES TENDRA EL RESULTADO 0
+  RET
+
+ORG 2000H ; Programa principal
+  MOV AL, C ; Coloca el caracter en AL
+  MOV BL, INICIAL ; Coloca la primera mayuscula de ASCII en BL
+  MOV BH, FINAL ; Coloca la ultima mayuscula de ASCII en BH
+  CALL COMPARATOR ; Llama a la subrutina COMPARATOR
+  HLT
+END
