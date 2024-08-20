@@ -1,0 +1,31 @@
+ORG 1000h ;Memoria de datos
+MENSAJE db "La Cautela Es Primordial", 0
+DISTANCIA db 20h
+valorA db "A"
+valorZ db "Z"
+
+ORG 3000h ;Subrutinas
+MINUSCULIZADOR:
+  MOV CL, [BX]
+  CMP CL, 0
+  JZ FIN
+  CMP CL, AH
+  JS SIGUIENTE
+  CMP AL, CL
+  JS SIGUIENTE
+  ADD CL, DISTANCIA
+  MOV [BX], CL
+SIGUIENTE:
+  INC BX
+  JMP MINUSCULIZADOR
+FIN:
+  RET
+  
+ORG 2000h ;Programa principal
+  MOV BX, offset MENSAJE
+  MOV AH, valorA
+  MOV AL, valorZ
+  CALL MINUSCULIZADOR
+  HLT
+END
+; Marca registrada Fotus Informática
