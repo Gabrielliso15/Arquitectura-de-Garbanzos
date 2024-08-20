@@ -1,0 +1,9 @@
+a) Con referencia a la interrupción INT 6, ¿qué se almacena en BX?
+b) En el programa anterior, ¿qué hace la segunda interrupción INT 7?
+c) ¿Qué valor queda almacenado en el registro CL? ¿Es el mismo que el valor numérico ingresado?
+
+a) En BX se almacena la direccion de memoria en la que se asignara el numero que se ingresa por medio de INT 6
+
+b) La segunda interrupcion INT 7 imprime en pantalla el numero ingresado por medio de INT 6
+
+c) Queda almacenado el valor de NUM, el cual es el mismo que el valor numerico ingresado
