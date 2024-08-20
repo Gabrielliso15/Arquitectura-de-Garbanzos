@@ -1,0 +1,29 @@
+ORG  1000H; Memoria de datos 
+  MENSAJE db "Agua marfil", 0
+  CANT    dw 0
+  COMPARE db "a"
+
+ORG 3000H ; Subrutinas
+CONTADOR: 
+          MOV AL, [BX]
+          CMP AL, 0
+          JZ FIN 
+          CMP AL, DL
+          JNZ SIGUIENTE
+          INC BX
+          INC CX
+          JMP CONTADOR
+SIGUIENTE: 
+          INC BX
+          JMP CONTADOR
+FIN:      
+          MOV CANT, CX
+          RET
+ 
+ORG  2000H ; Programa principal 
+  MOV BX, offset MENSAJE
+  MOV CX, 0
+  MOV DL, COMPARE
+  CALL CONTADOR
+  HLT
+END 
