@@ -1,1 +1,25 @@
-true
+ORG 1000H ;Memoria de datos
+C        db "Z" ;Caracter a chequear
+RES      db ?   ;Resultado
+INICIAL  db "A" ;Valor inicial de A en ascii
+FINAL    db "Z" ;Valor final de Z en ascii
+
+ORG 3000H ;Subrutinas
+COMPARATOR:
+  CMP AL, BL    ;Comparo la variable C con el caracter "A" en ascii
+  JS FIN        ;Si da negativo es porque es menor que 41 en la tabla ascii y no es mayuscula
+  CMP BH, AL    ;Comparo el caracter "Z" con la variable C en ascii
+  JS FIN        ;Si da negativo es porque se pasa de 90 en la tabla ascii y no es mayuscula
+  MOV RES, 0FFH ;Si pasa las dos comprobaciones seteo RES en 0FFH
+  RET
+FIN:
+  MOV RES, 0    ;Si no pasa las comprobaciones salta a FIN y seteo RES en 0
+  RET
+  
+ORG 2000H ;Programa principal
+  MOV AL, C       ;Asigno la variable C a la parte baja del registro A
+  MOV BL, INICIAL ;Asigno la primer mayuscula de la tabla ascii en la parte baja del registro B
+  MOV BH, FINAL   ;Asigno la ultima mayuscula de la tabla ascii en la arte alta del registro B
+  CALL COMPARATOR ;Llama a la subrutina COMPARATOR
+  HLT
+END
