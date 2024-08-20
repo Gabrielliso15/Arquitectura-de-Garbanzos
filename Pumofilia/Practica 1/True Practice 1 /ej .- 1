@@ -1,3 +1,12 @@
+;
+Contar letras ⭐ Escribir un programa que dado un string llamado MENSAJE, almacenado en la
+memoria de datos, cuente la cantidad de veces que la letra ‘a’ (minúscula) aparece en MENSAJE y lo
+almacene en la variable CANT. Por ejemplo, si MENSAJE contiene “Hola, Buenas Tardes”, entonces
+CANT debe valer 3
+
+
+
+
 ; Memoria de datos
 ORG 1000H
 MENSAJE DB "Agua marfil", 0    ; El string que vamos a contar, terminado en 0
