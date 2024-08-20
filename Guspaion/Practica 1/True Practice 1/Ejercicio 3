@@ -1,0 +1,16 @@
+ORG 1000H ;Memoria de datos
+  C db "G"              ;Variable a pasar a minuscula
+  DISTANCIA db 20h      ;Distancia entre un caracter mayuscula y otro minuscula en tabla ascii
+                        
+ORG 3000H ;Subrutinas
+MINIMIZADOR:
+  ADD AL, AH            ;Se suma a la mayuscula la distancia a su letra minuscula
+  MOV C, AL             ;Se le asigna a la variable C el valor correspondiente a su minuscula
+  RET                   
+  
+ORG 2000H ;Programa principal
+  MOV AL, C             ;Se asigna a la parte baja del registro A la variable C
+  MOV AH, DISTANCIA     ;Se asigna a la parte alta del registro A la variable DISTANCIA
+  CALL MINIMIZADOR      ;Se hace el llamado a la subrutina MINIMIZADOR
+  HLT
+END ;Fin del programa
