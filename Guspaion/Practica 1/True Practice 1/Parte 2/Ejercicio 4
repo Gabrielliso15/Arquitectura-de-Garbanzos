@@ -1,0 +1,52 @@
+a) 
+ORG 1000h ;Memoria de datos
+  A db "A"
+
+ORG 3000h ;Subrutinas
+IMPRIMIR:
+  mov AH, [BX]
+  cmp AH, 91
+  jz FIN
+  int 7
+  inc byte ptr[BX]
+  jmp IMPRIMIR
+FIN:
+  ret
+
+ORG 2000h ; Programa principal
+  mov BX, offset A
+  mov AL, 1
+  call IMPRIMIR
+  int 0
+END
+
+b) Para que el programa anterior muestre los numeros del 0 al 9 deberia cambiar A db "A" --> A db 0 , posteriormente deberia buscar el numero correspondiente al 
+elemento siguiente al 9 en ascii para reemplazar el valor 91, correspondiente al siguiente de "Z"
+
+c) 
+ORG 1000h ;Memoria de datos
+  A db 0
+  B db 9
+
+ORG 3000h ;Subrutinas
+IMPRIMIR:
+  mov BX, DX
+  mov AH, [BX]
+  cmp AH, CL  
+  jz FIN
+  int 7
+  mov BX, 10
+  int 7
+  inc byte ptr[DX] <-- Revisar error, acceso a memoria solo permitido para el registro BX
+  jmp IMPRIMIR
+FIN:
+  ret
+
+ORG 2000h ; Programa principal
+  mov DX, offset A
+  mov AL, 1
+  mov CL, B
+  inc CL
+  call IMPRIMIR
+  int 0
+END
