@@ -1,0 +1,78 @@
+ORG 1000H
+  A DB “HO LA”
+  B DB ?
+
+ORG 2000H 
+  mov bx, offset A
+  mov al, 4
+  int 7
+END
+
+El error en este codigo radica en que al hacer la separacion en "HO LA" y al asignarle al registro AL el valor 4 la impresion sera "HO L" ya que el espacio cuenta
+como un caracter, para solucionar esto se puede poner "HOLA" o ya que esta declarado/definido el byte siguiente en la variable B se puede asignar a AL la diferencia
+entre offset B y offset A, ademas no hay ni una INT 0 ni un HLT antes del END
+
+ORG 1000H
+  A DB "ARQ"
+  B DB ?
+
+ORG 2000H
+  MOV AL, 3
+  MOV BX, A
+  INT 7
+END
+
+Este programa es correcto aunque quiza ya que esta declarada la variable B en la siguiente posicion de memoria a la ultima de A seria conveniente hacer la diferencia
+entre offset B - offset A en lugar de asignar directamente el 3 al registro AL, como en el anterior no se puso ni INT 0 ni HLT antes del END
+
+ORG 1000H
+  A DB “HOLA”
+  B DB ?
+ 
+ORG 2000H
+  mov al, offset A - offset B
+  mov bx, offset A
+  int 7
+END
+
+El programa es correcto, lo unico a mencionar es una vez mas la falta de la interrupcion INT 0 o de un HLT antes del END
+
+ORG 1000H
+  A DB ?
+
+ORG 2000H
+  mov al, 3
+  mov bx, A
+  int 6
+END
+
+El programa funciona, aunque no es correcta la asignacion del 3 al registro AL ya que no cumple ninguna funcion, mas alla de eso la INT 6 hara que en la
+posicion 1000H se almacene el numero ingresado por teclado
+
+ORG 1000H
+  A DB ?
+ORG 2000H
+  int 6
+  mov bx, offset A
+END
+
+El programa es incorrecto, al llamar la interrupcion INT 6 antes de asignar una direccion de memoria en el registro BX no es posible asignar apropiadamente
+un numero por teclado, la solucion seria hacer primero la instrucion "mov BX, offset A" y luego "int 6"
+
+ORG 1000H
+  A DB ?
+ORG 2000H
+  mov bx, A
+  int 6
+  mov al, 1
+  int 7
+END
+
+El programa es correcto, se asigna correctamente la direccion de memoria en el registro BX para luego llamar a la interrupcion INT 6 y asi asignarle un numero
+por teclado y luego se asigna correctamente la longitud correspondiente a AL para que la interrupcion INT 7 imprima en pantalla el numero ingresado
+
+
+
+
+
+
