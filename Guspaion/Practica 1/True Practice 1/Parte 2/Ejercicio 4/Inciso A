@@ -1,0 +1,20 @@
+ORG 1000h ;Memoria de datos
+  A db "A"
+
+ORG 3000h ;Subrutinas
+IMPRIMIR:
+  mov AH, [BX]
+  cmp AH, 91
+  jz FIN
+  int 7
+  inc byte ptr[BX]
+  jmp IMPRIMIR
+FIN:
+  ret
+
+ORG 2000h ; Programa principal
+  mov BX, offset A
+  mov AL, 1
+  call IMPRIMIR
+  int 0
+END
