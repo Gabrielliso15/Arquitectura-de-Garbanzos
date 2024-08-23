@@ -5,11 +5,12 @@ ORG 1000H ;Memoria de datos
   FINRQST DB ?
   SUCCESS DB "Acceso permitido", 0Ah
   FINSUCC DB ?
-  FAILURE DB "Acceso BLOQUEADO", 0Ah
+  FAILURE DB "Contraseña erronea", 0Ah
   FINFAIL DB ?
   BLOQ DB "Acceso DENEGADO", 0Ah
   FINBLOQ DB ?
   PASSWORD DB ?
+
 ORG 3000H ;Subrutinas
 LOGIN:
   mov AH, 0
@@ -27,17 +28,22 @@ CHAR_IN:
   JNZ CHAR_IN
   mov BX, offset PASSWORD
 CMP_PASS:
-  pop CX
   cmp [BX], CH
-  inc BX
   JNZ RETRY
+  inc BX
   cmp [BX], CL
-  inc BX
   JNZ RETRY
-  cmp BX, offset PASSWORD+3
-  JNZ CMP_PASS
+  inc BX
+  cmp [BX], DH
+  JNZ RETRY
+  inc BX
+  cmp [BX], DL
+  JNZ RETRY
   JMP OK
 RETRY:
+  mov BX, offset FAILURE
+  mov AL, offset FINFAIL - offset FAILURE
+  int 7
   inc AH
   cmp AH, 5
   JNZ TRY
@@ -53,14 +59,16 @@ FIN:
   ret
   
 ORG 2000H ;Programa principal
-  mov BX, offset FINPASS
-PUSH_PASS:
-  dec BX
-  mov AL, [BX]
-  dec BX
-  mov AH, [BX]
-  push AX
-  cmp BX, offset PASS
-  JNZ PUSH_PASS
+  mov BX, offset PASS
+  mov CH, [BX]
+  inc BX
+  mov CL, [BX]
+  inc BX
+  mov DH, [BX]
+  inc BX
+  mov DL, [BX]
   call LOGIN
+  hlt
 END
+; Sólo dios y mi yo del presente sabe la aberración que acabo de generar.
+; A los lectores de este código del futuro les deseo suerte en este duro trayecto que les depara.
