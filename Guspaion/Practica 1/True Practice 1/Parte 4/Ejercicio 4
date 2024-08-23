@@ -1,0 +1,29 @@
+ORG 1000h ;Memoria de datos
+STRING db "String random"
+FINSTR db ?
+C db "a"
+
+ORG 3000h ;Subrutinas
+CONTAR_CAR:
+  mov CL, 0
+  mov CH, 0
+INICIO:
+  cmp AL, CH
+  JZ FIN
+  inc CH
+  mov DL, [BX]
+  inc BX
+  cmp DL, AH
+  JNZ INICIO
+  inc CL
+  JMP INICIO
+FIN:
+  ret
+  
+ORG 2000h ;Programa principal
+  mov BX, offset STRING
+  mov AL, offset FINSTR - offset STRING
+  mov AH, C
+  call CONTAR_CAR
+  hlt
+END
