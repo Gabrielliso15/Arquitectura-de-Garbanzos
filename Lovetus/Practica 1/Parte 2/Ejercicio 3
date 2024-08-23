@@ -1,0 +1,14 @@
+Indicar errores y cómo resolverlos
+
+ORG 1000H
+A DB “HO LA”
+B DB ?
+ORG 2000H
+mov bx, offset A
+mov al, 4
+int 7
+END
+
+Error: Sólo imrpime hasta la L del mensaje en "A", el carácter de espacio en blanco también cuenta al momento de imprimir un mensaje
+Solución: Cambiar la instrucción:
+mov al, 4 -> mov al, 5 ó mov al, offset B-offset A
