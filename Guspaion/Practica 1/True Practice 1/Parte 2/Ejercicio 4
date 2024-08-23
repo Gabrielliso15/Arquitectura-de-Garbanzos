@@ -25,8 +25,8 @@ elemento siguiente al 9 en ascii para reemplazar el valor 91, correspondiente al
 
 c) 
 ORG 1000h ;Memoria de datos
-  A db 0
-  B db 9
+  A db "0"
+  B db "9"
   LF db 10
 
 ORG 3000h ;Subrutinas
