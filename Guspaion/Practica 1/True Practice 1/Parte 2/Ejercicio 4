@@ -27,26 +27,29 @@ c)
 ORG 1000h ;Memoria de datos
   A db 0
   B db 9
+  LF db 10
 
 ORG 3000h ;Subrutinas
 IMPRIMIR:
-  mov BX, DX
-  mov AH, [BX]
-  cmp AH, CL  
+  cmp [BX], CL
   jz FIN
   int 7
-  mov BX, 10
+  mov BX, offset LF
   int 7
-  inc byte ptr[DX] <-- Revisar error, acceso a memoria solo permitido para el registro BX
+  mov BX, offset A
+  inc byte ptr[BX]
+  mov DX, BX
   jmp IMPRIMIR
 FIN:
   ret
 
 ORG 2000h ; Programa principal
-  mov DX, offset A
+  mov BX, offset A
   mov AL, 1
   mov CL, B
   inc CL
   call IMPRIMIR
   int 0
 END
+
+Consultar, no va pasando de cifra, imprime siempre 0
