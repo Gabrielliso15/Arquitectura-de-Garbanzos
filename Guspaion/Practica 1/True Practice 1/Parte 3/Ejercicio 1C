@@ -17,3 +17,9 @@ rut: mov bx, 3 ; Dirección 3000h SP: 7FFEh Contenido Pila: La direccion de memo
  call rut      ; Dirección 2004h SP: 7FFEh Contenido Pila: 7FFEh: 05 7FFFh: 20
  hlt           ; Dirección 2006h SP: 8000h Contenido Pila: Nada
  end
+
+a) Al ejecutarse "call rut" se pushea al stack la posicion de memoria correspondiente a la proxima del call y el IP(Instruction Pointer) toma el valor de la direccion
+de memoria que corresponda al inicio de la subrutina invocada.
+
+b) Al ejecutarse "ret" se hace un pop en el stack y si la pila se manejo de forma adecuada se deberia recuperar la direccion de memoria siguiente a la instruccion
+call que invoco la subrutina actual, esta direccion (O el dato sobre el que se haya hecho pop) tambien es pasada al IP.
