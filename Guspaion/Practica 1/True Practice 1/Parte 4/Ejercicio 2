@@ -20,3 +20,80 @@ org 2000h
  mov D,DL
  hlt
 end
+
+b)
+org 1000h
+ A db 8
+ B db 5
+ C db 4
+ D db ?
+
+org 3000h
+CALC: 
+ push bx
+ mov bx,sp
+ ADD BX, 8
+ mov dl,[bx]
+ sub bx,2
+ SUB DL, [BX]
+ sub bx,2
+ ADD DL, [BX]
+ pop bx
+ RET
+ 
+org 2000h
+ mov AL, A
+ push AX
+ MOV AL, C
+ push AX
+ MOV AL, B
+ push AX
+ call CALC
+ mov D,DL
+ POP AX
+ POP AX
+ POP AX
+ hlt
+end
+
+c)
+org 1000h
+ A db 8
+ B db 5
+ C db 4
+ D db ?
+ 
+org 3000h
+CALC: 
+ mov bx, sp
+ add bx, 6
+ push bx
+ mov bx, [bx]
+ mov dl,[bx]
+ pop bx
+ sub bx,2
+ push bx
+ mov bx, [bx]
+ sub dl, [bx]
+ pop bx
+ sub bx,2
+ push bx
+ mov bx, [bx]
+ ADD DL, [BX]
+ pop bx
+ RET
+ 
+org 2000h
+ mov AX, offset A
+ push AX
+ MOV AX, offset C
+ push AX
+ MOV AX, offset B
+ push AX
+ call CALC
+ mov D,DL
+ POP AX
+ POP AX
+ POP AX
+ hlt
+end
