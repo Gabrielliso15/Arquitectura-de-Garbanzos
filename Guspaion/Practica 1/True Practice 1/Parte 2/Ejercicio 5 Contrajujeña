@@ -1,0 +1,66 @@
+ORG 1000H ;Memoria de datos
+  PASS DB "1234"
+  FINPASS DB ?
+  REQUEST DB "Ingrese su contraseña", 0Ah
+  FINRQST DB ?
+  SUCCESS DB "Acceso permitido", 0Ah
+  FINSUCC DB ?
+  FAILURE DB "Acceso BLOQUEADO", 0Ah
+  FINFAIL DB ?
+  BLOQ DB "Acceso DENEGADO", 0Ah
+  FINBLOQ DB ?
+  PASSWORD DB ?
+ORG 3000H ;Subrutinas
+LOGIN:
+  mov AH, 0
+TRY:
+  mov BX, offset REQUEST
+  mov AL, offset FINRQST - offset REQUEST
+  int 7
+  mov BX, offset PASSWORD
+  mov AL, 0
+CHAR_IN:
+  int 6
+  inc BX
+  inc AL
+  cmp AL, 4
+  JNZ CHAR_IN
+  mov BX, offset PASSWORD
+CMP_PASS:
+  pop CX
+  cmp [BX], CH
+  inc BX
+  JNZ RETRY
+  cmp [BX], CL
+  inc BX
+  JNZ RETRY
+  cmp BX, offset PASSWORD+3
+  JNZ CMP_PASS
+  JMP OK
+RETRY:
+  inc AH
+  cmp AH, 5
+  JNZ TRY
+  mov BX, offset BLOQ
+  mov AL, offset FINBLOQ-offset BLOQ
+  int 7
+  JMP FIN
+OK:
+  mov BX, offset SUCCESS
+  mov AL, offset FINSUCC-offset SUCCESS
+  int 7
+FIN:
+  ret
+  
+ORG 2000H ;Programa principal
+  mov BX, offset FINPASS
+PUSH_PASS:
+  dec BX
+  mov AL, [BX]
+  dec BX
+  mov AH, [BX]
+  push AX
+  cmp BX, offset PASS
+  JNZ PUSH_PASS
+  call LOGIN
+END
