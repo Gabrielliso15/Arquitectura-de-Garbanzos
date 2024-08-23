@@ -16,3 +16,9 @@ FIN DB ?
 
 a) Ejecutar en el simulador ¿qué imprime?
 Imprime: "ARQUITECTURA DE COMPUTADORAS-FACULTAD DE INFORMATICA-UNLP"
+
+b) ¿Por qué imprime “UNLP” al final?
+Porque los últimos 4 bytes entre la etiqueta MSJ y FIN corresponden a esos caracteres
+
+c) Con referencia a la interrupción INT 7, ¿qué se almacena en los registros BX y AL?
+En el registro BX se almacena la dirección a partir de la cuál se arranca a imprimir en pantalla y en AL la cantidad de caracteres a imprimir
