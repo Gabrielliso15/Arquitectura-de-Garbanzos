@@ -8,12 +8,12 @@ a) Las acciones que tienen lugar al ejecutarse la instrucción "call rut"
 b) Las acciones que tienen lugar al ejecutarse la instrucción "ret"
 
   org 3000h
-rut: mov bx, 3 ; Dirección 3000h 
-  ret          ; Dirección 3002h
+rut: mov bx, 3 ; Dirección 3000h SP: 7FFEh Contenido Pila: La direccion de memoria siguiente al llamado que corresponda
+  ret          ; Dirección 3002h SP: 8000h Contenido Pila: Nada
   
  org 2000h
- call rut      ; Dirección 2000h SP: 7FFEh Contenido Pila: 7FFEh: 02h 7FFFh: 20h
- add cx, 5     ; Dirección 2002h
- call rut      ; Dirección 2004h
- hlt           ; Dirección 2006h 
+ call rut      ; Dirección 2000h SP: 7FFEh Contenido Pila: 7FFEh: 03 7FFFh: 20
+ add cx, 5     ; Dirección 2002h SP: 8000h Contenido Pila: Nada
+ call rut      ; Dirección 2004h SP: 7FFEh Contenido Pila: 7FFEh: 05 7FFFh: 20
+ hlt           ; Dirección 2006h SP: 8000h Contenido Pila: Nada
  end
