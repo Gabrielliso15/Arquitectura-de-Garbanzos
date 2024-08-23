@@ -1,0 +1,19 @@
+C) Llamadas a subrutinas y dirección de retorno ⭐
+Si el registro SP vale 8000h al comenzar el programa, indicar el valor de SP y el contenido de la luego de ejecutar cada instrucción.
+Si el contenido es desconocido/basura, indicarlo con el símbolo "?".
+Considerar que el programa comienza a ejecutarse con el IP en la dirección 2000h, es decir que la primera instrucción que se ejecuta es la de la línea 5 (call rut).
+Se provee la ubicación de las instrucciones en memoria, para poder determinar la dirección de retorno de la rutina.
+Además, explicar detalladamente:
+a) Las acciones que tienen lugar al ejecutarse la instrucción "call rut"
+b) Las acciones que tienen lugar al ejecutarse la instrucción "ret"
+
+  org 3000h
+rut: mov bx, 3 ; Dirección 3000h 
+  ret          ; Dirección 3002h
+  
+ org 2000h
+ call rut      ; Dirección 2000h SP: 7FFEh Contenido Pila: 7FFEh: 02h 7FFFh: 20h
+ add cx, 5     ; Dirección 2002h
+ call rut      ; Dirección 2004h
+ hlt           ; Dirección 2006h 
+ end
