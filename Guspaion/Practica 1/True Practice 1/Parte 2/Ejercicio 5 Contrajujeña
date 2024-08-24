@@ -1,74 +1,55 @@
-ORG 1000H ;Memoria de datos
-  PASS DB "1234"
-  FINPASS DB ?
-  REQUEST DB "Ingrese su contraseña", 0Ah
-  FINRQST DB ?
-  SUCCESS DB "Acceso permitido", 0Ah
-  FINSUCC DB ?
-  FAILURE DB "Contraseña erronea", 0Ah
-  FINFAIL DB ?
-  BLOQ DB "Acceso DENEGADO", 0Ah
-  FINBLOQ DB ?
-  PASSWORD DB ?
+ORG 1000h ;Memoria de datos
+Pass db "1234"
+newPass db "#","#","#","#"
+log db "Ingrese su contraseña", 0Ah
+finlog db ?
+accDen db "Contraseña erronea", 0Ah
+finDen db ?
+accExitoso db "Acceso permitido", 0Ah
+finExitoso db ?
+accBloqueado db "Acceso BLOQUEADO", 0Ah
+finBloqueado db ?
 
-ORG 3000H ;Subrutinas
+ORG 2000h ;Subrutinas
+  mov CH, 5
 LOGIN:
-  mov AH, 0
-TRY:
-  mov BX, offset REQUEST
-  mov AL, offset FINRQST - offset REQUEST
+  mov CL, 4
+  mov BX, offset log
+  mov AL, offset finlog - offset log
   int 7
-  mov BX, offset PASSWORD
-  mov AL, 0
-CHAR_IN:
+  mov BX, offset newPass
+SALTO:
   int 6
   inc BX
-  inc AL
-  cmp AL, 4
-  JNZ CHAR_IN
-  mov BX, offset PASSWORD
-CMP_PASS:
-  cmp [BX], CH
-  JNZ RETRY
-  inc BX
-  cmp [BX], CL
-  JNZ RETRY
-  inc BX
-  cmp [BX], DH
-  JNZ RETRY
-  inc BX
-  cmp [BX], DL
-  JNZ RETRY
-  JMP OK
-RETRY:
-  mov BX, offset FAILURE
-  mov AL, offset FINFAIL - offset FAILURE
+  dec CL
+  jnz SALTO
+  mov DX, 0
+PROX: 
+  mov BX, offset newPass
+  add BX, DX
+  mov AL, [BX]
+  mov BX, offset Pass
+  add BX, DX
+  cmp AL, [BX]
+  jnz AC_DEN
+  inc DX
+  cmp DX, 4
+  js PROX
+  mov BX, offset accExitoso
+  mov AL, offset finExitoso - offset accExitoso
   int 7
-  inc AH
-  cmp AH, 5
-  JNZ TRY
-  mov BX, offset BLOQ
-  mov AL, offset FINBLOQ-offset BLOQ
+  jmp FIN
+AC_DEN:
+  mov BX, offset accDen
+  mov AL, offset finDen - offset accDen
   int 7
-  JMP FIN
-OK:
-  mov BX, offset SUCCESS
-  mov AL, offset FINSUCC-offset SUCCESS
+  dec CH
+  jnz LOGIN
+  mov BX, offset accBloqueado
+  mov AL, offset finBloqueado - offset accBloqueado
   int 7
 FIN:
-  ret
-  
-ORG 2000H ;Programa principal
-  mov BX, offset PASS
-  mov CH, [BX]
-  inc BX
-  mov CL, [BX]
-  inc BX
-  mov DH, [BX]
-  inc BX
-  mov DL, [BX]
-  call LOGIN
   hlt
 END
-; Sólo dios y mi yo del presente sabe la aberración que acabo de generar.
-; A los lectores de este código del futuro les deseo suerte en este duro trayecto que les depara.
+
+;Un codigo un poco bastante mejor
