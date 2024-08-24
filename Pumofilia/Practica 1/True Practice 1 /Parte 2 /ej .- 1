@@ -1,7 +1,0 @@
-a) Ejecutar en el simulador ¿qué imprime?
-b) ¿Por qué imprime “UNLP” al final?
-c) Con referencia a la interrupción INT 7, ¿qué se almacena en los registros BX y AL?
-
-a- Imprime "Arquitectura de Computadoras - Facultad de Informatica - UNLP".
-b- Imprime UNLP al final ya que se define un byte para cada caracter correspondiente a UNLP en ASCII.
-c- Se almacena en BX la direccion del primer BYTE del string a imprimir y en AL la longitud del string.
