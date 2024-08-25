@@ -1,0 +1,24 @@
+ORG 1000h ;Memoria de datos
+A db 3
+B db 255
+RES dw ?
+
+ORG 3000h ;Subrutinas
+MUL:
+  add CL, AH
+  JNC SIGUIENTE
+  inc CH
+SIGUIENTE:
+  dec AL
+  JNZ MUL
+  mov AX, CX
+  ret
+  
+ORG 2000h ;Programa principal
+  mov AL, A
+  mov AH, B
+  mov CX, 0
+  call MUL
+  mov RES, AX
+  hlt
+END
