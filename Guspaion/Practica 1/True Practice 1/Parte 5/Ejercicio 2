@@ -1,0 +1,69 @@
+ORG 1000h ;Memoria de datos
+MSJ DB "Ingrese notas, finaliza con ."
+FINMSJ DB ?
+PUNTEQUE DB "."
+RES DB ?
+CANT_NOTAS DB 0
+NOTAS DB ?
+
+ORG 3000h ;Subrutinas
+CANT_APROBADOS:
+  mov CX, 0
+SIG:  
+  CMP byte ptr [BX], 4
+  js DESAP
+  inc CX
+DESAP:
+  inc BX
+  dec AH
+  jnz SIG
+  ret
+
+PORCENTAJE:
+  mov AX, 0
+  call MUL
+  mov BX, offset CANT_NOTAS
+  mov CL, [BX]
+  call DIV
+  ret
+
+MUL:
+  add AX, 100
+  dec CX
+  jnz MUL
+  ret
+
+DIV:
+  mov DX, 0
+LOOP:
+  cmp AX, CX
+  js FIN
+  sub AX, CX
+  inc DX
+  jmp LOOP
+FIN:
+  ret
+
+ORG 2000h ;Programa principal
+  mov  BX, offset MSJ
+  mov AL, offset FINMSJ - offset MSJ
+  int 7  
+  mov BX, offset NOTAS - 1
+IN_NOTAS:
+  inc BX
+  int 6
+  cmp byte ptr [BX], 2Eh
+  JZ SEGUIR
+  inc CANT_NOTAS
+  sub byte ptr [BX], 30h
+  JMP IN_NOTAS
+SEGUIR:
+  mov BX, offset NOTAS
+  mov AH, CANT_NOTAS
+  call CANT_APROBADOS
+  push CX
+  call PORCENTAJE
+  push DX
+  push AX
+  int 0
+END
