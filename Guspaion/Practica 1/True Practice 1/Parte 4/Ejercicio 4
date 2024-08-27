@@ -1,6 +1,6 @@
 ORG 1000h ;Memoria de datos
 A db 3
-B db 255
+B db 114
 RES dw ?
 
 ORG 3000h ;Subrutinas
