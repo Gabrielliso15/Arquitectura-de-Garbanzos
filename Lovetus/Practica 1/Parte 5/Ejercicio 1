@@ -1,0 +1,91 @@
+ORG 1000h
+INTENTOS DB 10
+ACIERTOS DW 0
+CANT DB -1
+PUNTO DB "."
+MSJIN DB "Ingresá la palabra a adivinar: "
+FINMSJIN DB ?
+STARTMSJ DB 0Ah, "Comenzá a adivinar!", 0Ah
+FINSTARTMSJ DB ?
+WINMSJ DB 0Ah, "Ganaste!"
+FINWINMSJ DB ?
+LOOSEMSJ DB 0Ah, "Perdiste, el string era: "
+PALABRA DB ?
+
+ORG 3000h
+FASE1:
+  push AX
+  push BX
+  push CX
+  mov BX, offset MSJIN
+  mov AL, offset FINMSJIN - offset MSJIN
+  int 7
+  mov CL, PUNTO
+  mov BX, offset PALABRA-1
+IN_CHAR:
+  inc BX
+  int 6
+  inc CANT
+  cmp [BX], CL
+  jnz IN_CHAR
+  mov BX, offset STARTMSJ
+  mov AL, offset FINSTARTMSJ - offset STARTMSJ
+  int 7
+  pop CX
+  pop BX
+  pop AX
+  ret
+
+FASE2:
+  push AX
+  push BX
+  push CX
+  push DX
+
+TRY:
+  mov BX, offset CANT
+  mov CX, [BX]
+  mov BX, offset PALABRA
+  add BX, CX
+  add BX, ACIERTOS
+  int 6
+  mov DL, [BX]
+  sub BX, CX
+  mov DH, [BX]
+  add BX, CX
+  cmp DH, DL
+  JZ ACIERTO
+PIFIA:
+  dec INTENTOS
+  JZ LOOSE
+  JMP TRY
+ACIERTO:
+  inc ACIERTOS
+  mov BX, offset PALABRA-1
+  add BX, ACIERTOS
+  mov AL, 1
+  int 7
+  mov DX, ACIERTOS
+  cmp DL, CANT
+  JNZ TRY
+  mov BX, offset WINMSJ
+  mov AL, offset FINWINMSJ - offset WINMSJ
+  int 7
+  JMP FIN
+LOOSE:
+  mov BX, offset LOOSEMSJ
+  mov AL, offset PALABRA - offset LOOSEMSJ
+  add AL, CANT
+  int 7  
+FIN:
+  pop DX
+  pop CX
+  pop BX
+  pop AX
+  ret
+
+ORG 2000h
+  call FASE1
+  call FASE2
+  int 0
+END
