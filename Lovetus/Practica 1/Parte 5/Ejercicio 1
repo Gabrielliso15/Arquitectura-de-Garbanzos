@@ -1,4 +1,4 @@
-ORG 1000h
+  ORG 1000h
 INTENTOS DB 10
 ACIERTOS DW 0
 CANT DB -1
@@ -12,7 +12,7 @@ FINWINMSJ DB ?
 LOOSEMSJ DB 0Ah, "Perdiste, el string era: "
 PALABRA DB ?
 
-ORG 3000h
+  ORG 3000h
 FASE1:
   push AX
   push BX
