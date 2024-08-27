@@ -1,0 +1,71 @@
+ORG 1000h ;Memoria de datos
+PUNTEQUE db "."
+TRY db ?
+MSJ1 db "Ingrese la palabra a adivinar, finaliza en .", 0Ah
+FINMSJ1 db ?
+MSJ2 db "Comenza a adivinar!", 0Ah
+FINMSJ2 db ?
+MSJGANADOR db 0Ah, "Ganaste garbanzo!"
+FINMSJGANA db ?
+MSJPERDEDOR db 0Ah, "Perdiste garbanzo :(",0Ah, "El string era ->"
+FINMSJPERDE db ?
+ADIVINATOR db ?
+
+ORG 3000h ;Subrutinas
+FASE1:
+  mov BX, offset ADIVINATOR - 1
+IN_LETTER:
+  inc BX
+  inc DL
+  int 6
+  cmp byte ptr [BX], AH
+  JNZ IN_LETTER
+  ret
+
+FASE2:
+  push BX
+  mov BX, offset TRY
+  int 6
+  mov CH, [BX]
+  pop BX
+  cmp CH, [BX]
+  JZ CORRECTO
+  dec CL
+  JZ PETE
+  JMP FASE2
+CORRECTO:
+  int 7
+  inc BX
+  cmp byte ptr [BX], AH
+  JNZ FASE2
+  mov BX, offset MSJGANADOR
+  mov AL, offset FINMSJGANA - offset MSJGANADOR
+  int 7
+  JMP RETORNO
+PETE:
+  mov BX, offset MSJPERDEDOR
+  mov AL, offset FINMSJPERDE - offset MSJPERDEDOR
+  add AL, DL
+  int 7
+RETORNO:
+  ret
+
+ORG 2000h ;Programa principal
+  mov AH, PUNTEQUE
+  mov BX, offset MSJ1
+  mov AL, offset FINMSJ1 - offset MSJ1
+  int 7
+  mov DL, 0
+  call FASE1
+  mov BX, offset MSJ2
+  mov AL, offset FINMSJ2 - offset MSJ2
+  int 7
+  mov CL, 5
+  mov BX, offset ADIVINATOR
+  mov AL, 1
+  cmp byte ptr [BX], AH
+  JZ FIN
+  call FASE2
+FIN:
+  int 0
+END
