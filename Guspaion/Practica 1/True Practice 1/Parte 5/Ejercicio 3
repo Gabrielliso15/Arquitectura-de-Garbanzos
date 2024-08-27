@@ -1,0 +1,139 @@
+ORG 1000h ;Memoria de datos
+PUNTEQUE db "."
+FINMAYUS db "Z"
+FINMINUS db "z"
+MSJ1 db "Ingrese un string, finaliza en ."
+FINMSJ1 db ?
+CANT_C db ?
+CANT_L db ?
+CANT_V db ?
+CANT_CON db ?
+VOCALES db "aeiouAEIOU"
+CONSONANTES db "bcdfghjklmnpqrstwxyzBCDFGHJKLMNPQRSTWXYZ"
+CADENA db ?
+
+ORG 3000h ;Subrutinas
+STRINGIFY:
+  mov BX, offset CADENA - 1
+  mov DH, -1
+IN_LETTER:
+  inc BX
+  inc DH
+  int 6
+  cmp [BX], AH
+  JNZ IN_LETTER
+  ret
+
+ES_LETRA:
+  cmp CL, 41h
+  JS NO_ES_MAYUS
+  cmp FINMAYUS, CL
+  JS NO_ES_MAYUS
+  JMP FIN_LETRA
+NO_ES_MAYUS:
+  cmp CL, 61h
+  JS NO_ES_LETRA
+  cmp FINMINUS, CL
+  JS NO_ES_LETRA
+  JMP FIN_LETRA
+NO_ES_LETRA:
+  mov CL, 00h
+  JMP FIN_LETRA_RET
+FIN_LETRA:
+  mov CL, 0FFh
+FIN_LETRA_RET:
+  ret
+
+CONTIENE:
+  mov CH, 10
+LOOP_CONTIENE:
+  inc BX
+  cmp CL, [BX]
+  JZ SI_CONTIENE
+  dec CH
+  JNZ LOOP_CONTIENE
+  mov CL, 00h
+  JMP FIN_CONTIENE
+SI_CONTIENE:
+  mov CL,0FFh
+FIN_CONTIENE:
+  ret
+
+ES_VOCAL:
+  push BX
+  mov BX, offset VOCALES - 1
+  call CONTIENE
+  pop BX
+  ret
+
+CONTAR_LETRAS:
+  mov DH, 0
+LOOP_LETRAS:
+  mov CL, [BX]
+  cmp CL, AH
+  JZ FIN_LETRAS
+  inc BX
+  call ES_LETRA
+  cmp CL, 0FFh
+  JNZ LOOP_LETRAS
+  inc DH
+  JMP LOOP_LETRAS
+FIN_LETRAS:
+  ret
+
+CONTAR_VOC:
+  mov DH, 0
+LOOP_VOCAL:
+  mov CL, [BX]
+  cmp CL, AH
+  JZ FIN_VOCAL
+  inc BX
+  call ES_VOCAL
+  cmp CL, 0FFh
+  JNZ LOOP_VOCAL
+  inc DH
+  JMP LOOP_VOCAL
+FIN_VOCAL:
+  ret
+
+ES_CONSONANTE:
+  push BX
+  mov BX, offset CONSONANTES - 1
+  call CONTIENE
+  pop BX
+  ret
+
+CONTAR_CONSONANTES:
+  mov DH, 0
+LOOP_CONSONANTE:
+  mov CL, [BX]
+  cmp CL, AH
+  JZ FIN_CONSONANTE
+  inc BX
+  call ES_CONSONANTE
+  cmp CL, 0FFh
+  JNZ LOOP_CONSONANTE
+  inc DH
+  JMP LOOP_CONSONANTE
+FIN_CONSONANTE:
+  ret
+
+ORG 2000h ;Programa principal
+  mov AH, PUNTEQUE
+  mov BX, offset MSJ1
+  mov AL, offset FINMSJ1 - offset MSJ1
+  int 7
+  call STRINGIFY
+  mov BX, offset CADENA
+  mov CANT_C, DH
+  mov BX, offset CADENA
+  call CONTAR_LETRAS
+  mov CANT_L, DH
+  mov BX, offset CADENA
+  call CONTAR_VOC
+  mov CANT_V, DH
+  mov BX, offset CADENA
+  call CONTAR_CONSONANTES
+  mov CANT_CON, DH
+  int 0
+END
