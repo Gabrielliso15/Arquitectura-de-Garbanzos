@@ -60,7 +60,7 @@ ORG 2000h ;Programa principal
   mov BX, offset MSJ2
   mov AL, offset FINMSJ2 - offset MSJ2
   int 7
-  mov CL, 5
+  mov CL, 50
   mov BX, offset ADIVINATOR
   mov AL, 1
   cmp byte ptr [BX], AH
