@@ -1,0 +1,57 @@
+  ORG 1000h
+PUNTO DB "."
+A_MAYUS DB "A"
+A_MIN DB "a"
+Z_MAYUS DB "Z"
+Z_MIN DB "z"
+CANT_L DB 0
+CANT_V DB 0
+CANT_CON DB 0
+CANT_CAR DB 0
+OK DW 0FFh
+FALLO DW 0FFh
+CHAR DB ?
+MSJ DB "Ingrese texto a analizar, terminar con . :"
+FINMSJ DB ?
+MSJ_L DB "Total de letras: "
+FINMSJ_L DB ?
+MSJ_V DB "Total de vocales: "
+FINMSJ_V DB ?
+MSJ_C DB "Total de consonantes: "
+FINMSJ_C DB ?
+CADENA DB ?
+
+  ORG 3000h
+ES_LETRA:
+  cmp CL, A_MAYUS
+  js NO_ES
+  mov DX, OK
+  jmp FIN_LETRA
+NO_ES:
+  mov DX, FALLO
+FIN_LETRA:
+  ret
+
+CONTIENE:
+  push CX
+  push BX
+  push AX
+  mov DX, FALLO
+  mov AL, CANT_CAR
+  mov BX, offset CADENA-1
+  mov CL, CHAR
+LOOP:
+  inc BX
+  cmp [BX], CL
+  JZ TIENE
+  dec AL
+  JZ FIN_LOOP
+TIENE:
+  mov DX, OK
+FIN_LOOP:
+  pop AX
+  pop BX
+  pop CX
+  ret
+
+END
