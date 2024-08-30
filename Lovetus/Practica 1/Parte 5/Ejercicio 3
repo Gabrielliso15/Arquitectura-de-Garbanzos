@@ -1,6 +1,8 @@
   ORG 1000h
 PUNTO DB "."
 VOCALES DB "aeiouAEIOU"
+A_MAYUS DB "A"
+Z_MIN DB "z"
 CANT_VOCALES DB 10
 CANT_L DB 0
 CANT_V DB 0
@@ -20,8 +22,12 @@ FINMSJ_C DB ?
 CADENA DB ?
 
   ORG 3000h
+; CL tiene el caracter a comparar
+; DX retorna el código de retorno
 ES_LETRA:
   cmp CL, A_MAYUS
+  js NO_ES
+  cmp Z_MIN, CL
   js NO_ES
   mov DX, OK
   jmp FIN_LETRA
@@ -30,6 +36,10 @@ NO_ES:
 FIN_LETRA:
   ret
 
+; CL tiene el caracter a comparar
+; BX tiene el inicio-1 del string a comparar
+; AL tiene la cantidad de caracteres del string
+; DX retorna el código de retorno
 CONTIENE:
   mov DX, FALLO
 LOOP:
@@ -43,13 +53,16 @@ TIENE:
 FIN_LOOP:
   ret
 
+; Recibe el caracter en CL
+; AX es usado como contador de cantidad de vocales
+; BX tiene el inicio del string de vocales
+; DX retorna el código de retorno
 ES_VOCAL:
   push AX
   push BX
   mov BX, offset VOCALES - 1
   mov AL, CANT_VOCALES
   call CONTIENE
-FIN_ES_VOCAL:
   pop BX
   pop AX
   ret
