@@ -1,9 +1,7 @@
   ORG 1000h
 PUNTO DB "."
-A_MAYUS DB "A"
-A_MIN DB "a"
-Z_MAYUS DB "Z"
-Z_MIN DB "z"
+VOCALES DB "aeiouAEIOU"
+CANT_VOCALES DB 10
 CANT_L DB 0
 CANT_V DB 0
 CANT_CON DB 0
@@ -33,13 +31,7 @@ FIN_LETRA:
   ret
 
 CONTIENE:
-  push CX
-  push BX
-  push AX
   mov DX, FALLO
-  mov AL, CANT_CAR
-  mov BX, offset CADENA-1
-  mov CL, CHAR
 LOOP:
   inc BX
   cmp [BX], CL
@@ -49,9 +41,20 @@ LOOP:
 TIENE:
   mov DX, OK
 FIN_LOOP:
-  pop AX
-  pop BX
-  pop CX
   ret
 
+ES_VOCAL:
+  push AX
+  push BX
+  mov BX, offset VOCALES - 1
+  mov AL, CANT_VOCALES
+  call CONTIENE
+FIN_ES_VOCAL:
+  pop BX
+  pop AX
+  ret
+
+ES_CONSONANTE:
+  push AX
+  
 END
