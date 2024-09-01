@@ -45,12 +45,12 @@ PB EQU 31h
 CA EQU 32h
 CB EQU 33h
 ORG 2000h
-INICIO:
   mov AL, 0FFh
   out CA, AL
   mov AL, 00h
   out CB, AL
+LOOP:
   in AL, PA
   out PB, AL
-  JMP INICIO
+  JMP LOOP
 END
