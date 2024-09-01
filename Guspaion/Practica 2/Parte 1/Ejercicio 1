@@ -1,0 +1,42 @@
+
+PB EQU 31h
+CB EQU 33h
+ORG 2000H
+ MOV al, 00h
+ out CB, al
+ mov al, 0Fh
+ out PB, al
+ int 0
+end
+
+
+PA EQU 30h
+CA EQU 32h
+ORG 1000h
+ msj db "Apagadas"
+ORG 2000H
+ mov al, 0FFh
+ out CA, al
+ in al, PA
+ cmp al, 0
+ jnz fn
+ mov al, 8
+ mov bx , offset msj
+ int 7
+ fn: int 0
+end
+
+
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+ORG 2000h
+  mov al, 0FFh
+  out CA, al
+  mov al, 0
+  out CB, al
+  in al, PA
+  out PB, al
+  int 0
+end
