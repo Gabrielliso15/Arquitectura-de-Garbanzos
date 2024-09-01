@@ -1,0 +1,58 @@
+;Ejercicio 2.a
+PB EQU 31h
+CB EQU 33h
+ORG 1000h ;Memoria de datos
+PATRONCIS db 11000011b
+ORG 2000h ;Programa principal
+  mov al, 00h
+  out CB, al
+  in al, PB
+  mov al, PATRONCIS
+  out PB, al
+  int 0
+END
+
+;Ejercicio 2.b
+PA EQU 30h
+CA EQU 32h
+ORG 1000h
+KEY db 10000000b
+MSJON db "Llave prendida"
+FINMSJON db ?
+MSJOFF db "Llave apagada"
+FINMSJOFF db ?
+ORG 2000h
+  mov AL, 0FFh
+  out CA, AL
+  in AL, PA
+  AND AL, KEY
+  JZ OFF
+  mov BX, offset MSJON
+  mov AL, offset FINMSJON - offset MSJON
+  int 7
+  JMP FIN
+OFF:
+  mov BX, offset MSJOFF
+  mov AL, offset FINMSJOFF - offset MSJOFF
+  int 7
+FIN:
+  int 0
+END
+
+;Ejercicio 2.c
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+ORG 1000h
+KEY db 10000000b
+ORG 2000h
+INICIO:
+  mov AL, 0FFh
+  out CA, AL
+  mov AL, 00h
+  out CB, AL
+  in AL, PA
+  out PB, AL
+  JMP INICIO
+END
