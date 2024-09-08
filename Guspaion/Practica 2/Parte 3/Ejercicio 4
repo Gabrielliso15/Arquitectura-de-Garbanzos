@@ -1,0 +1,47 @@
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+ORG 1000h
+MSJ DB "Arqui"
+FIN DB ?
+  
+ORG 3000h
+ini_pio:
+  mov AL, 0FDh
+  out CA, AL
+  mov AL, 0
+  out CB, AL
+  ret
+
+poll:
+  in AL, PA
+  and AL, 1
+  jnz poll
+  ret
+
+flanco_ascendente:
+  in AL, PA
+  or AL, 2h
+  out PA, AL
+  in AL, PA
+  and AL, 0FDh
+  out PA, AL
+  ret
+
+imprimir:
+  mov BX, offset MSJ
+LOOP:
+  call poll
+  mov AL, [BX]
+  out PB, AL
+  call flanco_ascendente
+  inc BX
+  cmp BX, offset FIN
+  jnz LOOP
+  ret
+
+ORG 2000H
+  call  imprimir
+  int 0
+end
