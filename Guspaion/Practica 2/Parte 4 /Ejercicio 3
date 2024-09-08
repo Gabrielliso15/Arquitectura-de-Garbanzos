@@ -1,0 +1,28 @@
+PA EQU 30h
+CA EQU 32h
+
+ORG 1000h ;Memoria de datos
+ok db "ACTIVADO", 0Ah
+fin db ?
+
+ORG 3000h ;Subrutinas
+check:
+  in AL, PA
+  cmp AL, 10000001b
+  JNZ check
+  mov BX, offset ok
+  mov AL, offset fin - offset ok
+  int 7
+loop:
+  in AL, PA
+  cmp AL, 10000001b
+  JZ loop
+  JMP check
+  ret
+
+ORG 2000h ;Programa principal
+  mov AL, 0FFh
+  out CA, AL
+  call check
+  int 0
+END
