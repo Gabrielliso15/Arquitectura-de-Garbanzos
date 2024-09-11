@@ -1,0 +1,49 @@
+PB EQU 31h
+CB EQU 33h
+
+ORG 3000h ;Subrutinas
+ini_pio:
+  mov AL, 0
+  out CB, AL
+  ret
+
+rotarizq:
+  adc AL, AL
+  mov DL, AL
+  ret
+
+; CL contiene N
+; CH contiene 8 siempre
+rotarder_N:
+  sub CL, 1
+LOOP_DER:
+  call rotarizq
+  dec CL
+  jnz LOOP_DER
+  ret
+
+rotarder:
+  mov CL, 1
+  call rotarder_N
+  ret
+
+imprimir:
+  out PB, AL
+  ret
+
+ORG 2000h ;Programa principal
+  call ini_pio
+  mov AL, 1
+  out PB, AL
+LOOP:
+  call rotarizq
+  out PB, AL
+  AND DL, 080h
+  jz LOOP
+DER:
+  call rotarder
+  out PB, AL
+  AND AL, 1
+  jz DER
+  jmp LOOP
+END
