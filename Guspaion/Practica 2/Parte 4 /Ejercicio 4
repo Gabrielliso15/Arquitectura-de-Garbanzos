@@ -1,0 +1,58 @@
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+
+ORG 1000h ;Memoria de datos
+MSJFIN db "Fin del programa"
+FINPROG db ?
+MSJC db "Arquitectura de Computadoras: ACTIVADA", 0Ah
+FINC db ?
+
+ORG 3000h ;Subrutinas
+ini_pio:
+  mov AL, 0h
+  out CB, AL
+  mov AL, 0FFh
+  out CA, AL
+
+check_A:
+  mov CL, 0
+  in AL, PA
+  cmp AL, 0h
+  JNZ fin_A
+  mov CL, 1
+  mov BX, offset MSJFIN
+  mov AL, offset FINPROG - offset MSJFIN
+  int 7
+fin_A:
+  ret
+
+check_B:
+  in AL, PA
+  not AL
+  out PB, AL
+  ret
+
+check_C:
+  in AL, PA
+  AND AL, 1
+  jz fin_C
+  mov BX, offset MSJC
+  mov AL, offset FINC - offset MSJC
+  int 7
+fin_C:
+  ret
+
+ORG 2000h ;Programa principal
+  call ini_pio
+LOOP:
+  call check_A
+  cmp CL, 1
+  JZ fin_programa
+  call check_B
+  call check_C
+  jmp LOOP
+fin_programa:
+  int 0
+END
