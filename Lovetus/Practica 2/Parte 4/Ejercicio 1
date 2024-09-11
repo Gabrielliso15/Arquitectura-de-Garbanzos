@@ -1,1 +1,60 @@
-a
+PB EQU 31h
+CB EQU 33h
+
+ORG 1000h
+anim db 1
+
+ORG 3000h ;Subrutinas
+ini_pio:
+  mov AL, 0
+  out CB, AL
+  mov AL, [BX]
+  out PB, AL
+  ret
+
+rotarizq:
+  mov AL, [BX]
+  add AL, AL
+  jnc SEGUIR
+  inc AL
+SEGUIR:
+  mov [BX], AL
+  ret
+
+; CL contiene N
+rotarizq_N:
+  call rotarizq
+  dec CL
+  JNZ rotarizq_N
+  ret
+
+; CL contiene N
+rotarder_N:
+  mov CH, 8
+  sub CH, CL
+LOOP_DER:
+  call rotarizq
+  dec CH
+  jnz LOOP_DER
+  ret
+
+rotarder:
+  mov CL, 1
+  call rotarder_N
+  ret
+
+ORG 2000h ;Programa principal
+  mov BX, offset anim
+  call ini_pio
+LOOP:
+  call rotarizq
+  out PB, AL
+  AND AL, 080h
+  jz LOOP
+DER:
+  call rotarder
+  out PB, AL
+  AND AL, 1
+  jz DER
+  jmp LOOP
+END
