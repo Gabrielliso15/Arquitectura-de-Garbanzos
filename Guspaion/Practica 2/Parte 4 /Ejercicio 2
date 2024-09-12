@@ -1,0 +1,35 @@
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+
+ORG 1000h ;Memoria de datos
+clave db 11000101b
+msj db "GANASTE GARBANZO", 0Ah, "DEIDAD"
+msjfin db ?
+
+ORG 3000h ;Subrutinas
+ini_pio:
+  mov AL, 0FFh
+  out CA, AL
+  mov AL, 0h
+  out CB, AL
+  ret
+
+check:
+  in AL, PA
+  XOR AL, clave
+  not AL
+  out PB, AL
+  cmp AL, 0FFh
+  jnz check
+  mov AL, offset msjfin - offset msj
+  int 7
+  ret
+
+ORG 2000h ;Programa principal
+ call ini_pio
+ mov BX, offset msj
+ call check
+ int 0
+END
