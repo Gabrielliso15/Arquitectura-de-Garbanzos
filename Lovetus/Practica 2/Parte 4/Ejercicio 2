@@ -1,0 +1,33 @@
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+
+ORG 1000h
+  KEY DB ?
+  MSJ DB "GANASTE!"
+  FINMSJ DB ?
+
+ORG 3000h
+ini_pio:
+  mov AL, 0
+  out CB, AL
+  mov AL, 0FFh
+  out CA, AL
+  ret
+
+ORG 2000h
+  call ini_pio
+  mov BX, offset KEY
+LOOP:
+  in AL, PA
+  XOR AL, [BX]
+  NOT AL
+  out PB, AL
+  cmp AL, 0FFh
+  jnz LOOP
+  mov BX, offset MSJ
+  mov AL, offset FINMSJ - offset MSJ
+  int 7
+  int 0
+END
