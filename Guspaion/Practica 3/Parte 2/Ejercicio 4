@@ -1,0 +1,38 @@
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+
+N_F10 EQU 15
+
+ORG 03Ch
+IP_F10 DW RUT_F10
+
+ORG 1000h ;Memoria de datos
+msj db "Larga vida al imperio de Porkus!", 0Ah
+finmsj db ?
+
+ORG 3000h ;Subrutinas
+RUT_F10:
+  PUSH AX
+  dec DX
+  mov AL, EOI
+  out EOI, AL
+  POP AX
+  int 7
+  iret
+
+ORG 2000h ;Programa principal
+  CLI
+  mov AL, 0FEh
+  out IMR, AL
+  mov AL, N_F10
+  out INT0,AL
+  mov DX, 5
+  mov BX, offset msj
+  mov AL, offset finmsj - offset msj
+  STI
+LAZO:
+  cmp DX, 0
+  jnz LAZO
+  int 0
+END
