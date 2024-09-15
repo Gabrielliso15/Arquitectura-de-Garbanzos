@@ -1,0 +1,77 @@
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+
+N_F10 EQU 4
+
+ORG 16
+IP_F10 DW RUT_F10
+
+ORG 1000h ;Memoria de datos
+contador db 0
+cadena db ?
+
+ORG 3000h ;Subrutinas
+construir_cadena:
+  int 6
+  inc BX
+  inc contador
+  cmp DH, 1
+  jnz construir_cadena
+  ret
+
+RUT_F10:
+  mov BX, offset cadena
+LOOP:
+  call poll
+  mov AL, [BX]
+  out PB, AL
+  inc BX
+  call flanco_ascendente
+  dec contador
+  jnz LOOP
+  in AL, EOI
+  out EOI, AL
+  mov DH, 1
+  iret
+
+flanco_ascendente:
+  in AL, PA
+  and AL, 0FDh
+  out PA, AL
+  in AL, PA
+  or AL, 2
+  out PA, AL
+  ret
+  
+poll:
+  in AL, PA
+  and AL, 1
+  jnz poll
+  ret
+
+ini_pio:
+  mov AL, 0
+  out CB, AL
+  mov AL, 0FDh
+  out CA, AL
+  ret
+
+ORG 2000h ;Programa principal
+  CLI
+  mov AL, 0FEh
+  out IMR, AL
+  mov AL, N_F10
+  out INT0, AL
+  STI
+  mov BX, offset cadena
+  call ini_pio
+  call construir_cadena
+lazo:
+  jmp lazo
+END
