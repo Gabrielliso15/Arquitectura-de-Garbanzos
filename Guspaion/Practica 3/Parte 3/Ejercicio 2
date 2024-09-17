@@ -1,0 +1,37 @@
+PB EQU 31h
+CB EQU 33h
+
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+
+N_F10 EQU 15
+
+ORG 60
+IP_F10 DW RUT_F10
+
+ORG 3000h
+ini_pio:
+  mov AL, 0
+  out CB, AL
+  ret
+
+RUT_F10:
+  in AL, PB
+  not AL
+  out PB, AL
+  in AL, EOI
+  out EOI,AL
+  iret
+
+ORG 2000h
+  CLI
+  call ini_pio
+  mov AL, 0FEh
+  out IMR, AL
+  mov AL, N_F10
+  out INT0, AL
+  STI
+LOOP:
+  jmp LOOP
+END
