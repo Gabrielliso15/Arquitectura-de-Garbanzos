@@ -1,0 +1,75 @@
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+INT1 EQU 25h
+CONT EQU 10h
+COMP EQU 11h
+
+N_F10 EQU 15
+N_TIMER EQU 30
+
+ORG 60
+IP_F10 DW RUT_F10
+
+ORG 120
+IP_TIMER DW RUT_TIMER
+
+ORG 1000h
+msj db "Ingrese un numero del 1 al 9", 0Ah
+finmsj db ?
+NUM DB ?
+
+ORG 3000h
+ini_int:
+  CLI
+  mov AL, 0FCh
+  out IMR, AL
+  mov AL, N_F10
+  out INT0, AL
+  mov AL, N_TIMER
+  out INT1, AL
+  STI
+  ret
+
+RUT_F10:
+  push AX
+  mov AL, 1
+  out COMP, AL
+  mov AL, 0
+  out CONT, AL
+  mov AL, EOI
+  out EOI, AL
+  pop AX
+  iret
+
+RUT_TIMER:
+  push AX
+  cmp NUM, 2Fh
+  jnz lazo_timer
+  mov CH, 1
+  jmp fin_timer
+lazo_timer:  
+  int 7
+  dec NUM
+  mov AL, 0
+  out CONT, AL
+fin_timer:
+  mov AL, EOI
+  out EOI, AL
+  pop AX
+  iret
+
+  
+ORG 2000h
+  call ini_int
+  mov BX, offset msj
+  mov AL, offset finmsj - offset msj
+  int 7
+  mov BX, offset NUM
+  int 6
+  mov AL, 1
+loop:
+  cmp CH, 1
+  jnz loop
+  int 0
+END
