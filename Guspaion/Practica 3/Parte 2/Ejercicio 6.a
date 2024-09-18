@@ -44,11 +44,8 @@ RUT_F10:
 
 RUT_TIMER:
   push AX
-  cmp NUM, 2Fh
-  jnz lazo_timer
-  mov CH, 1
-  jmp fin_timer
-lazo_timer:  
+  cmp NUM, 02Fh
+  jz fin_timer
   int 7
   dec NUM
   mov AL, 0
@@ -69,7 +66,7 @@ ORG 2000h
   int 6
   mov AL, 1
 loop:
-  cmp CH, 1
+  cmp NUM, 02Fh
   jnz loop
   int 0
 END
