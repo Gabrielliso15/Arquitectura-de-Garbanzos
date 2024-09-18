@@ -5,13 +5,13 @@ INT1 EQU 25h
 CONT EQU 10h
 COMP EQU 11h
 
-N_F10 EQU 15
-N_TIMER EQU 30
+N_F10 EQU 10
+N_TIMER EQU 15
 
-ORG 60
+ORG 40
 IP_F10 DW RUT_F10
 
-ORG 120
+ORG 60
 IP_TIMER DW RUT_TIMER
 
 ORG 1000h
@@ -33,6 +33,8 @@ ini_int:
 
 RUT_F10:
   push AX
+  mov AL, 0FDh
+  out IMR, AL
   mov AL, 1
   out COMP, AL
   mov AL, 0
