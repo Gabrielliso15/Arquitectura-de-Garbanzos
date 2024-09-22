@@ -1,0 +1,71 @@
+CONT EQU 10h
+COMP EQU 11h
+
+EOI EQU 20h
+IMR EQU 21h
+INT1 EQU 25h
+
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+
+N_TIMER EQU 10
+
+ORG 40
+IP_TIMER DW RUT_TIMER
+
+ORG 1000h
+  
+
+ORG 3000h
+ini_timer:
+  mov AL, 11111101b
+  out IMR, AL
+  mov AL, N_TIMER
+  out INT1, AL
+  ret
+
+ini_pio:
+  mov AL, 0FFh
+  out CA, AL
+  mov AL, 0
+  out CB, AL
+  ret
+
+check:
+  push AX
+  in AL, PA
+  and AL, 10000000b
+  jz naonao
+  mov AL, 0FFh
+  out PB, AL
+  mov AL, 12
+  out COMP, AL
+  mov AL, 0
+  out CONT, AL
+loopingson:
+  cmp DL, 1
+  jnz loopingson
+naonao:
+  pop AX
+  ret
+
+RUT_TIMER:
+  push AX
+  mov DL, 1
+  mov AL, 0
+  out PB, AL
+  mov AL, EOI
+  out EOI, AL
+  pop AX
+  iret
+
+ORG 2000h
+  CLI
+  call ini_timer
+  STI
+  call ini_pio
+  call check
+  int 0
+END
