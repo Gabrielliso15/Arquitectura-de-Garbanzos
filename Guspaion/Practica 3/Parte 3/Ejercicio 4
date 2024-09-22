@@ -1,0 +1,101 @@
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+
+N_F10 EQU 10
+
+ORG 40
+IP_F10 DW RUT_F10
+
+ORG 1000h
+msj db "Presione F10 para continuar"
+finmsj db ?
+cadena db ?
+
+
+ORG 3000h
+ini_f10:
+  mov AL, 0FEh
+  out IMR, AL
+  mov AL, N_F10
+  out INT0, AL
+  ret
+
+ini_pio:
+  mov AL, 0FDh
+  out PA, AL
+  mov AL, 0
+  out CB, AL
+  ret
+
+rut_f10:
+  push AX
+  mov CL, 10
+  mov BX, offset cadena
+  mov DL, 1
+loop_cadena:
+  int 6
+  inc BX
+  dec CL
+  jnz loop_cadena
+  mov AL, EOI
+  out EOI, AL
+  pop AX
+  iret
+
+poll:
+  push AX
+  in AL, PA
+  and AL, 1
+  jnz poll
+  pop AX
+  ret
+
+flanco_ascendente:
+  push AX
+  in AL, PA
+  and AL, 0FDh
+  out PA, AL
+  in AL, PA
+  or AL, 2
+  out PA, AL
+  pop AX
+  ret
+
+impresion:
+  mov BX, SP
+  add BX, 2
+  mov BX, [BX]
+loop_impresion:
+  call poll
+  mov AL, [BX]
+  out PB, AL
+  call flanco_ascendente
+  inc BX
+  dec CL
+  jnz loop_impresion
+  ret
+  
+ORG 2000h
+  CLI
+  call ini_f10
+  STI
+  call ini_pio
+  mov BX, offset msj
+  mov AL, offset finmsj - offset msj
+  int 7
+loopardo:
+  cmp DL, 1
+  jnz loopardo
+  mov BX, offset cadena
+  push BX
+  mov CL, 10
+  call impresion
+  pop BX
+  int 0
+END
