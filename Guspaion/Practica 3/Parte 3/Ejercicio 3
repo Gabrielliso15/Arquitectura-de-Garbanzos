@@ -1,0 +1,43 @@
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+
+N_F10 EQU 10 ;Dirección del vector de interrupciones
+
+ORG 40
+IP_F10 DW RUT_F10 ;Etiqueta de la subrutina que va a ir a buscar la int
+
+ORG 1000h
+num DB ?
+
+ORG 3000h
+RUT_F10:
+  push AX
+  mov BX, offset num
+  mov AL, 1
+  int 7
+  mov DH, 1
+  in AL, EOI
+  out EOI, AL
+  pop AX
+  iret
+
+ORG 2000h
+  CLI
+  mov AL, 11111110b
+  out IMR, AL
+  mov AL, N_F10
+  out INT0, AL
+  STI
+LOOP_9:
+  mov num, 30h 
+LOOP:
+  cmp DH, 1
+  jz FIN
+  inc num
+  cmp num, 39h
+  jz LOOP_9
+  jmp LOOP
+FIN:
+  int 0
+END
