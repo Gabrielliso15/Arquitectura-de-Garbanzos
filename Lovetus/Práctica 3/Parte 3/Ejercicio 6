@@ -1,0 +1,47 @@
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+
+DATA EQU 40h
+ESTADO EQU 41h
+
+N_F10 EQU 10
+
+ORG 40
+IP_F10 DW RUT_F10
+
+ORG 3000h
+ini_pic:
+  push AX
+  mov AL, 0FEh
+  out IMR, AL
+  mov AL, N_F10
+  out INT0, AL
+  pop AX
+  ret
+
+RUT_F10:
+  iret
+
+DESCENDER:
+  ret
+
+ORG 1000h
+MSJ DB "INGRESE UN NÚMERO DEL 1 AL 9: "
+FINMSJ DB ?
+CHAR DB ?
+NINE DB "9"
+ZERO DB "0"
+
+ORG 2000h
+CLI
+call ini_pic
+MOV BX, offset MSJ
+MOV AL, offset FINMSJ - offset MSJ
+STI
+END
