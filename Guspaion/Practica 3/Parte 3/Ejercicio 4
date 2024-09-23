@@ -28,7 +28,7 @@ ini_f10:
 
 ini_pio:
   mov AL, 0FDh
-  out PA, AL
+  out CA, AL ; Aca estaba mal la inicialización
   mov AL, 0
   out CB, AL
   ret
@@ -52,7 +52,8 @@ poll:
   push AX
   in AL, PA
   and AL, 1
-  jnz poll
+  jnz poll ; Ojo hacer jump a poll aca, si está busy la impresora va a volver a hacer push AX
+           ; "¡Subí el Stack Pointer B...!"
   pop AX
   ret
 
