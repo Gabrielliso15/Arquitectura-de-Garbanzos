@@ -17,7 +17,7 @@ RUT_F10:
   mov AL, 1
   int 7
   mov DH, 1
-  in AL, EOI
+  in AL, EOI ; Aca me parece mejor hacer el pasaje con Mov (Como está hecho en la práctica)
   out EOI, AL
   pop AX
   iret
