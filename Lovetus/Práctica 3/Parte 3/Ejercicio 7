@@ -1,0 +1,44 @@
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+INT1 EQU 25h
+
+PB EQU 31h
+CB EQU 33h
+
+CONT EQU 10h
+COMP EQU 11h
+
+N_F10 EQU 5
+N_CLK EQU 10
+
+ORG 20
+IP_F10 DW RUT_F10
+
+ORG 40
+IP_CLK DW RUT_CLK
+
+ORG 1000h
+MSJ DB "Hola!"
+FIN_MSJ DB ?
+ZERO DB "0"
+
+ORG 3000h
+RUT_CLK:
+  inc BX
+  mov AL, 0
+  out CONT, AL
+  iret
+
+RUT_F10:
+  mov DX, 1
+  iret
+
+ORG 2000h
+  CLI
+  mov DX, 0
+  mov AL, 5
+  out COMP, AL
+  STI
+  
+END
