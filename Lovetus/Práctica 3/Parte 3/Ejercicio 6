@@ -15,7 +15,22 @@ N_F10 EQU 10
 ORG 40
 IP_F10 DW RUT_F10
 
+ORG 1000h
+MSJ DB "INGRESE UN NÚMERO DEL 1 AL 9: "
+FINMSJ DB ?
+CHAR DB ?
+NINE DB "9"
+ZERO DB "0"
+
 ORG 3000h
+ini_hs:
+  push AX
+  in AL, ESTADO
+  and AL, 7Fh
+  out ESTADO, AL
+  pop AX
+  ret
+  
 ini_pic:
   push AX
   mov AL, 0FEh
@@ -25,23 +40,53 @@ ini_pic:
   pop AX
   ret
 
+; Espera un parámetro carácter numérico
+; en CX para el conteo
 RUT_F10:
+  push CX
+  call DESCENDER
+  pop CX
   iret
 
-DESCENDER:
+LEER_DIGITO:
+  MOV BX, offset MSJ
+  MOV AL, offset FINMSJ - offset MSJ
+  int 7
+  mov BX, offset CHAR
+INGRESAR:
+  int 6
+  mov CX, [BX]
+  cmp NINE, CL
+  js INGRESAR
+  cmp CL, ZERO
+  js INGRESAR
   ret
 
-ORG 1000h
-MSJ DB "INGRESE UN NÚMERO DEL 1 AL 9: "
-FINMSJ DB ?
-CHAR DB ?
-NINE DB "9"
-ZERO DB "0"
+DESCENDER:
+  mov BX, SP
+  ADD BX, 2
+  mov CX, [BX]
+POLL:
+  in AL, ESTADO
+  AND AL, 1
+  jnz POLL
+  mov AL, CL
+  out DATA, AL
+  dec CL
+  cmp CL, 2Fh
+  jnz POLL
+  mov DX, 0
+  ret
 
 ORG 2000h
-CLI
-call ini_pic
-MOV BX, offset MSJ
-MOV AL, offset FINMSJ - offset MSJ
-STI
+  CLI
+  call ini_hs
+  call ini_pic
+  call LEER_DIGITO
+  mov DX, 1
+  STI
+LAZO:
+  cmp DX, 1
+  jz LAZO
+  int 0
 END
