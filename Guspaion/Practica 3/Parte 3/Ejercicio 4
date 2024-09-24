@@ -50,10 +50,10 @@ loop_cadena:
 
 poll:
   push AX
+poll_loop
   in AL, PA
   and AL, 1
-  jnz poll ; Ojo hacer jump a poll aca, si está busy la impresora va a volver a hacer push AX
-           ; "¡Subí el Stack Pointer B...!"
+  jnz poll_loop
   pop AX
   ret
 
