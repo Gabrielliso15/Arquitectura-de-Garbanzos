@@ -1,0 +1,81 @@
+CONT EQU 10h
+COMP EQU 11h
+
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+INT1 EQU 25h
+
+N_F10 EQU 10
+N_TIMER EQU 15
+
+PB EQU 31h
+CB EQU 33h
+
+ORG 40
+IP_F10 DW RUT_F10
+
+ORG 60
+IP_TIMER DW RUT_TIMER
+
+ORG 1000h
+msj db "hola!",0
+
+ORG 3000h
+ini_pio:
+  push AX
+  mov AL, 0
+  out CB, AL
+  pop AX
+  ret
+
+ini_int:
+  push AX
+  mov AL, N_F10
+  out INT0, AL
+  mov AL, N_TIMER
+  out INT1, AL
+  mov AL, 5
+  out COMP, AL
+  mov AL, 0
+  out CONT, AL
+  pop AX
+  ret
+
+RUT_F10:
+  push AX
+  mov DL, 1
+  mov AL, EOI
+  out EOI, AL
+  pop AX
+  iret
+
+RUT_TIMER:
+  push AX
+  mov AL, [BX]
+  out PB, AL
+  inc BX
+  cmp AL, 0
+  jnz FIN
+  mov DL, 1
+FIN:
+  mov AL, 0
+  out CONT, AL
+  mov AL, EOI
+  out EOI, AL
+  pop AX
+  iret
+
+ORG 2000h
+  CLI
+  mov AL, 11111100b
+  out IMR, AL
+  call ini_int
+  STI
+  call ini_pio
+  mov BX, offset msj
+LAZO:
+  cmp DL, 1
+  jnz LAZO
+  int 0
+END
