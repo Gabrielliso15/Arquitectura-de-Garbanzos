@@ -45,6 +45,8 @@ ini_int:
 RUT_F10:
   push AX
   mov DL, 1
+  mov AL, 0FFh
+  out IMR, AL
   mov AL, EOI
   out EOI, AL
   pop AX
@@ -58,6 +60,8 @@ RUT_TIMER:
   cmp AL, 0
   jnz FIN
   mov DL, 1
+  mov AL, 0FFh
+  out IMR, AL
 FIN:
   mov AL, 0
   out CONT, AL
