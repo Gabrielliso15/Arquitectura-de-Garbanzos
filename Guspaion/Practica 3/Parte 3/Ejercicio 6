@@ -1,0 +1,88 @@
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+INT2 EQU 26h
+
+DATO EQU 40h
+ESTADO EQU 41h
+
+N_F10 EQU 10
+N_HAND EQU 15
+
+ORG 40
+IP_F10 DW RUT_F10
+
+ORG 60
+IP_HAND DW RUT_HAND
+
+ORG 1000h
+digito db ?
+msj db "INGRESE UN NUMERO DEL 1 AL 9"
+finmsj db ?
+
+ORG 3000h
+ini_int0:
+  mov AL, N_F10
+  out INT0, AL
+  ret
+
+ini_int2:
+  mov AL, N_HAND
+  out INT2, AL
+  mov AL, 10000001b
+  out ESTADO, AL
+  ret
+
+RUT_F10:
+  push AX
+  mov AL, 11111011b
+  out IMR, AL
+  mov AL ,EOI
+  out EOI, AL
+  pop AX
+  iret
+
+RUT_HAND:
+  PUSH AX
+  MOV AL, [BX]
+  CMP AL, '0'
+  JNZ NO_FIN
+  PUSH AX
+  MOV AL, 0FFh
+  OUT IMR, AL
+  MOV CL, 1
+  POP AX
+NO_FIN:
+  OUT DATO, AL
+  DEC BYTE PTR [BX]
+  MOV AL, 20h
+  OUT EOI, AL
+  POP AX
+  IRET
+
+leer_digito:
+  push AX
+loop_digito:
+  mov BX, offset msj
+  mov AL, offset finmsj - offset msj
+  int 7
+  mov BX, offset digito
+  int 6
+  cmp byte ptr [BX], '0'
+  JZ loop_digito
+  pop AX
+  ret
+  
+ORG 2000h
+  CLI
+  mov AL, 11111110b
+  out IMR, AL
+  call ini_int0
+  call ini_int2
+  STI
+  call leer_digito
+loop:
+  cmp CL, 1
+  jnz loop
+  int 0
+END
