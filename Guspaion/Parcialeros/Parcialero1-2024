@@ -1,0 +1,80 @@
+PA EQU 30h
+CA EQU 32h
+
+CONT EQU 10H
+COMP EQU 11H
+
+EOI EQU 20H
+IMR EQU 21H
+INT1 EQU 25H
+
+N_CLK EQU 10
+
+ORG 40
+IP_CLK DW RUT_CLK
+
+ORG 1000h
+MSJ_APA DB "El insano de Octo dormido"
+FIN_APA db ?
+MSJ_ENC DB "El insano de Octo a la caza"
+FIN_ENC db ?
+TERMINE db 0
+
+ORG 3000H
+; Espera el inicio de la cadena en BX
+; Espera la cantidad de caracteres en CL
+IMPRIMIR:
+  CLI
+  PUSH AX
+  MOV AL, 0FFH
+  OUT IMR, AL
+  STI
+  PUSH BX
+  MOV BX, SP
+  ADD BX, 6
+  MOV AL, [BX]
+  POP BX
+  INT 7
+  POP AX
+  ret
+
+RUT_CLK:
+  PUSH AX
+  PUSH BX
+  MOV AL, offset FIN_APA - offset MSJ_APA
+  MOV BX, offset MSJ_APA
+  PUSH AX
+  CALL IMPRIMIR
+  MOV TERMINE, 1
+  POP AX
+  POP BX
+  POP AX
+  IRET
+
+ORG 2000h
+  CLI
+  MOV AL, 11111101B
+  OUT IMR, AL
+  MOV AL, N_CLK
+  OUT INT1, AL
+  MOV AL, 10
+  OUT COMP, AL
+  MOV AL, 0FFH
+  OUT CA, AL
+  MOV AL, 0
+  OUT CONT, AL
+  STI
+  MOV BX, OFFSET MSJ_ENC
+  MOV CL, OFFSET FIN_ENC - OFFSET MSJ_ENC
+COMPARAR:  
+  IN AL, PA
+  AND AL, 0F0H
+  CMP TERMINE, 1
+  JZ FIN
+  CMP AL, 0F0H
+  JNZ COMPARAR
+  PUSH CX
+  CALL IMPRIMIR
+FIN:  
+  INT 0
+END
