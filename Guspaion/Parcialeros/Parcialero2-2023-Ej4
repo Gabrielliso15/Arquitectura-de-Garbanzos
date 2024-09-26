@@ -1,0 +1,48 @@
+PB EQU 31h
+CB EQU 33h
+
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+
+N_F10 EQU 10
+
+ORG 40
+IP_F10 DW RUT_F10
+
+ORG 1000h
+MSJ DB "Precaución zona Garbanza"
+FIN_MSJ DB ?
+TERMINAR DB 0
+
+ORG 3000h
+RUT_F10:
+  MOV TERMINAR, 1
+  MOV AL, EOI
+  OUT EOI, AL
+  iret
+
+ORG 2000h
+  CLI
+  MOV AL, 0FEh
+  OUT IMR, AL
+  MOV AL, N_F10
+  OUT INT0, AL
+  STI
+  MOV AL, 0
+  OUT CB, AL
+  MOV BX, offset MSJ
+  MOV CL, offset FIN_MSJ - offset MSJ
+LOOPARDO:
+  MOV AL, 0
+  OUT PB, AL
+  MOV AL, [BX]
+  CMP TERMINAR, 1
+  JZ FIN
+  OUT PB, AL
+  INC BX
+  DEC CL
+  JNZ LOOPARDO
+FIN:
+  int 0
+END
