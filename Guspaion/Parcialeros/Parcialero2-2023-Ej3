@@ -1,0 +1,67 @@
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+
+ORG 1000h
+MSJ DB "Buen dia emperador Malothor Gregorio", 0Ah
+FIN_MSJ DB ?
+MSJ_FIN DB "Hasta la vista Lacra"
+TERMINE DB 1
+
+ORG 3000h
+a:
+  PUSH AX
+  IN AL, PA
+  NOT AL
+  OUT PB, AL
+  POP AX
+  RET
+
+b:
+  PUSH AX
+  PUSH BX
+  IN AL, PA
+  AND AL, 080h
+  JNZ SEGUIR
+  MOV BX, offset MSJ
+  MOV AL, offset FIN_MSJ - offset MSJ
+  int 7
+SEGUIR:
+  POP BX
+  POP AX
+  RET
+
+c:
+  PUSH AX
+  IN AL, PA
+  CMP AL, 0
+  JNZ NO_TERMINA
+  MOV BX, offset MSJ_FIN
+  MOV AL, offset TERMINE - offset MSJ_FIN
+  int 7
+  MOV TERMINE, 0
+NO_TERMINA:
+  POP AX
+  RET
+ORG 2000h
+  MOV AL, 0FFh
+  OUT CA, AL
+  MOV AL, 0
+  OUT CB, AL
+  IN AL, PA
+  MOV CL, AL
+LOOPARDO:
+  CMP TERMINE, 0
+  JZ FIN
+  IN AL, PA
+  CALL B
+  CALL C
+  CMP AL, CL
+  JZ LOOPARDO
+  CALL A
+  JMP LOOPARDO
+FIN:
+  int 0
+
+END
