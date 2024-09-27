@@ -1,0 +1,79 @@
+EOI EQU 20h
+IMR EQU 21h
+INT0 EQU 24h
+INT2 EQU 26h
+DATO EQU 40h
+ESTADO EQU 41h
+
+N_F10 EQU 10
+N_HAND EQU 15
+
+ORG 40
+IP_F10 DW RUT_F10
+
+ORG 60
+IP_HAND DW RUT_HAND
+
+ORG 1000h
+MSJ DB "Runco es un androide", 0Ah
+FINMSJ DB ?
+
+ORG 3000h
+config_f10:
+  push AX
+  mov AL, 0FEh
+  out IMR, AL
+  mov AL, N_F10
+  out INT0, AL
+  pop AX
+  ret
+
+activar_hand:
+  push AX
+  CLI
+  mov AL, 11111010b
+  out IMR, AL
+  STI
+  pop AX
+  ret
+
+RUT_F10:
+  push AX
+  call activar_hand
+  mov BX, offset MSJ
+  mov CH, offset FINMSJ - offset MSJ
+  mov AL, EOI
+  out EOI, AL
+  pop AX
+  iret
+
+RUT_HAND:
+  push AX
+  mov AL, [BX]
+  out DATO, AL
+  inc BX
+  dec CH
+  JNZ siguiente
+  dec CL
+  mov AL, 0FEh
+  out IMR, AL
+siguiente:
+  mov AL, EOI
+  out EOI, AL
+  pop AX
+  iret
+
+ORG 2000h
+  CLI
+  call config_f10
+  mov AL, 15
+  out INT2, AL
+  mov AL, 10000000b
+  out ESTADO, AL
+  STI
+  mov CL, 5
+loopardios:
+  cmp CL, 0
+  JNZ loopardios
+  int 0
+END
