@@ -1,0 +1,56 @@
+ORG 1000h
+Vector dw 50,15,25,12,2,5,4,6,8
+finVector db ?
+msjpar db "Triunfa la paridad"
+finpar db ?
+msjimpar db "Triunfa la imparidad"
+finimpar db ?
+
+ORG 3000h
+es_par:
+  and AX, 1
+  cmp AX, 0
+  JNZ no_es
+  mov CX, 1
+  JMP fin_es_par
+no_es:
+  mov CX, 0
+fin_es_par:
+  ret
+
+Contar_pares:
+  push CX
+  push AX
+  mov AX, [BX]
+  call es_par
+  pop AX
+  cmp CX, 1
+  pop CX
+  JNZ es_impar
+  inc AX
+  dec CX
+es_impar:
+  inc CX
+  add BX, 2
+  sub DX, 2
+  JNZ Contar_pares
+  ret
+
+ORG 2000h
+  mov DX, offset finVector - offset Vector
+  mov BX, offset Vector
+  mov AX, 0
+  mov CX, 0
+  call Contar_pares
+  cmp AX, CX
+  JS triunfo_impar
+  mov BX, offset msjpar
+  mov AL, offset finpar - offset msjpar
+  JMP triunfo_par
+triunfo_impar:
+  mov BX, offset msjimpar
+  mov AL, offset finimpar - offset msjimpar
+triunfo_par:  
+  int 7
+  int 0
+END
