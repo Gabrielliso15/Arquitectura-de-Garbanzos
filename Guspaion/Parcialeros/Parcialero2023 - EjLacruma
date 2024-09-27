@@ -1,0 +1,67 @@
+PA EQU 30h
+PB EQU 31h
+CA EQU 32h
+CB EQU 33h
+
+ORG 1000h
+car db ?
+termine db 0
+
+ORG 3000h
+ini_pio:
+  push AX
+  mov AL, 0FFh
+  out CA, AL
+  mov AL, 0
+  out CB, AL
+  pop AX
+  ret
+
+a:
+  push AX
+  push BX
+  mov BX, offset car
+  in AL, PA
+  mov car, AL
+  mov AL, 1
+  int 7
+  mov car, 0Ah
+  int 7
+  pop BX
+  pop AX
+  ret
+
+b:
+  push AX
+  in AL, PA
+  and AL, 080h
+  cmp AL, 080h
+  JNZ fin_b
+  in AL, PB
+  not AL
+  out PB, AL
+fin_b:
+  pop AX
+  ret
+  
+c:
+  push AX
+  in AL, PA
+  cmp AL, 0
+  JNZ fin_c
+  out PB, AL
+  mov termine, 1
+fin_c:
+  pop AX
+  ret
+
+ORG 2000h
+  call ini_pio
+loopardios:
+  call a
+  call b
+  call c
+  cmp termine, 1
+  JNZ loopardios
+  int 0
+END
