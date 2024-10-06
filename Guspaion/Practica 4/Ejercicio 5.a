@@ -1,0 +1,18 @@
+	.data	
+A:	.word	5
+B:	.word	2
+S:	.word	0
+P:	.word	0
+D:	.word	0
+
+	.code
+ld	$t0, A($zero)
+ld	$t1, B($zero)
+dadd	$t2, $t0, $t1
+sd	$t2, S($zero)
+dmul	$t2, $t2, $t1
+sd	$t2, P
+dmul	$t3, $t0, $t0
+ddiv	$t3, $t3, $t1
+sd	$t3, D
+halt
